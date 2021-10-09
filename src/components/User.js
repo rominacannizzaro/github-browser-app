@@ -1,17 +1,19 @@
 import React from 'react'
 
 const User = ({ user }) => {
-    const userPageUrl = `https://www.github.com/${user.name}`
-    /*const reposPageUrl = `https://www.github.com/${user.name}?tab=repositories`*/
 
+    const pageUrl = `https://www.github.com/${user.name}`
 
    return (
      <div>
          <h3>Results:</h3>
-         User: <a target="_blank" rel="noreferrer" href={userPageUrl}>{user.name}</a>
+         <a target="_blank" rel="noreferrer" href={pageUrl}>{user.name}</a>
+         <br></br>
+         {user.bio ? user.bio : null}
          <br></br>
     </div>
    )
 }
 
 export default User
+
