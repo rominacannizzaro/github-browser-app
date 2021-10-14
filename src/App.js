@@ -4,7 +4,7 @@ import User from './components/User'
 import Repo from './components/Repo'
 
 const App = () => {
-  const [ userInfo, setUserInfo ] = useState(null)
+  const [ userInfo, setUserInfo ] = useState([])
   const [ newName, setNewName ] = useState('')
 
   const [ repos, setRepos ] = useState([])
@@ -15,33 +15,31 @@ const App = () => {
       alert('Please, enter a username.')    
     }
 
-  axios.get(`https://api.github.com/users/${newName}`)
-      .then(response => {      
-        const userObject = {
-          id: response.data.id,
-          name: response.data.login,
-          bio: response.data.bio,
-          type: response.data.type,
-          reposUrl: response.data.repos_url,
-        }
+  const userPromise = axios.get(`https://api.github.com/users/${newName}`)
+  .then(response => {
+    const userObject = {
+      id: response.data.id,
+      name: response.data.login,
+      bio: response.data.bio,
+      type: response.data.type,
+      reposUrl: response.data.repos_url,
+      pic: response.data.avatar_url,
+      location: response.data.location
+    }
+    setUserInfo([userObject])
+    setNewName('')
+    })
 
-        setUserInfo(userObject)
-        setNewName('')
-      })
-      .catch(
-        function (error) {
-          alert('Invalid username.')
-      }
-    )
-    
-  axios.get(`https://api.github.com/users/${newName}/repos`)
-      .then(response => {  
-        const arrayOfRepos = response.data
-        console.log(arrayOfRepos)
-    
-        setRepos(arrayOfRepos)
-      }
-    )
+  const reposPromise = axios.get(`https://api.github.com/users/${newName}/repos`)
+    .then(response => {
+      const arrayOfRepos = response.data
+      setRepos(arrayOfRepos)
+    })
+
+  Promise.all([userPromise, reposPromise])
+    .then((values) => {
+    console.log(values)
+  })
 }
 
   const handleNewUser = (event) => {  
@@ -54,7 +52,7 @@ return (
     <br></br>
     <h2>Welcome to my GitHub browser app!</h2>
     <br></br>
-    <h3>Please write the username of a GitHub user or organisation:</h3>
+    <h3>Please, enter a GitHub user's or organisation's name:</h3>
     <form onSubmit={searchUser}>
         <div>
           Name: <input 
@@ -69,10 +67,13 @@ return (
     </form>
     <br></br>
     <div>
-      {userInfo 
-        ?  <User key={userInfo.id} user={userInfo} />
-        :  null
-      }
+      <ul>
+        {userInfo
+          .filter(item => item.name.toLowerCase())
+          .map(user =>  
+            <User key={user.id} user={user} repos={repos}  />
+        )} 
+       </ul>
     </div>
     <div>
     {repos.length === 0 
