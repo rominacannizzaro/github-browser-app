@@ -2,10 +2,13 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import User from './components/User'
 import Repo from './components/Repo'
+import NonexistentUser from './components/NonexistentUser'
 
 const App = () => {
   const [ userInfo, setUserInfo ] = useState([])
   const [ newName, setNewName ] = useState('')
+  const [ nonexistentUser, setNonexistentUser ] = useState(false)
+
 
   const [ repos, setRepos ] = useState([])
 
@@ -40,6 +43,12 @@ const App = () => {
     .then((values) => {
     console.log(values)
   })
+  .catch(error => {
+    console.log(`ERROR IS ${error.message}`)
+    if (error.message.includes('404')) {
+      setNonexistentUser(true)
+    }
+  })
 }
 
   const handleNewUser = (event) => {  
@@ -66,6 +75,9 @@ return (
         <button type="submit">Search</button>
     </form>
     <br></br>
+    <div>
+      <NonexistentUser nonexistentUser={nonexistentUser} />
+    </div>
     <div>
       <ul>
         {userInfo
