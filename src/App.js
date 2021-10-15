@@ -19,10 +19,11 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ repos, setRepos ] = useState([])
   const [ nonexistentUser, setNonexistentUser ] = useState(false)
-  const [ isUsernameValidationError , setIsUsernameValidationError] = useState(true)
+  const [ isUsernameValid, setIsUsernameValid ] = useState(true)
 
   const searchUser = (event) => {
-    event.preventDefault()  
+    event.preventDefault()
+    setNonexistentUser(false)    
 
     if (newName === '') {
       alert('Please, enter a username.')    
@@ -66,10 +67,15 @@ const App = () => {
     return githubUsernameRegex.test(username); 
   }
 
-  const handleNewUser = (event) => {  
+  const handleUsernameChange = (event) => {  
     const nameValue = event.target.value
     setNewName(nameValue)
-    setIsUsernameValidationError(isValidUsername(nameValue))
+    setIsUsernameValid(isValidUsername(nameValue))
+    setNonexistentUser(false)
+    if (nameValue.length === 0) {
+      console.log('Setting USER NAME VALIDATION error to false')
+      setIsUsernameValid(true)
+    }
   }
 
   const searchInputStyle = {
@@ -125,14 +131,14 @@ const App = () => {
                   aria-describedby="searchArea" 
                   placeholder="Search"  
                   value={newName} 
-                  onChange={handleNewUser}
+                  onChange={handleUsernameChange}
                 >  
                 </input>
                 <button type="submit" className="btn btn-primary mb-2" style={searchButtonStyle}>Search</button>
               </div>
             </form>
             <div className="col-auto">
-               <UsernameValidationError isError={isUsernameValidationError} />
+               <UsernameValidationError isUsernameValid={isUsernameValid} />
             </div>
             <div className="col-auto">
                <NonexistentUser nonexistentUser={nonexistentUser} />
