@@ -26,41 +26,42 @@ const App = () => {
     setNonexistentUser(false)    
 
     if (newName === '') {
-      alert('Please, enter a username.')    
+      setIsUsernameValid(false)
+      setTimeout(() => {
+        setIsUsernameValid(true)
+      }, 5000)
+    } else {
+      const userPromise = axios.get(`https://api.github.com/users/${newName}`)
+        .then(response => {
+          const userObject = {
+            id: response.data.id,
+            name: response.data.login,
+            bio: response.data.bio,
+            type: response.data.type,
+            reposUrl: response.data.repos_url,
+            pic: response.data.avatar_url,
+            location: response.data.location
+          }
+          setUserInfo([userObject])
+          setNewName('')
+        })
+  
+      const reposPromise = axios.get(`https://api.github.com/users/${newName}/repos`)
+        .then(response => {
+          const arrayOfRepos = response.data
+          setRepos(arrayOfRepos)
+        })
+  
+      Promise.all([userPromise, reposPromise])
+        .then(() => {
+          setNonexistentUser(false)
+        })
+        .catch(error => {
+        if (error.message.includes('404')) {
+          setNonexistentUser(true)
+          }
+        })
     }
-
-  const userPromise = axios.get(`https://api.github.com/users/${newName}`)
-    .then(response => {
-      const userObject = {
-        id: response.data.id,
-        name: response.data.login,
-        bio: response.data.bio,
-        type: response.data.type,
-        reposUrl: response.data.repos_url,
-        pic: response.data.avatar_url,
-        location: response.data.location
-      }
-      setUserInfo([userObject])
-      setNewName('')
-  })
-
-  const reposPromise = axios.get(`https://api.github.com/users/${newName}/repos`)
-    .then(response => {
-      const arrayOfRepos = response.data
-      setRepos(arrayOfRepos)
-    })
-
-  Promise.all([userPromise, reposPromise])
-    .then((values) => {
-      console.log(values)
-      setNonexistentUser(false)
-    })
-    .catch(error => {
-    console.log(`ERROR IS ${error.message}`)
-    if (error.message.includes('404')) {
-      setNonexistentUser(true)
-      }
-    })
   }
 
   const isValidUsername = (username) => {
@@ -73,7 +74,6 @@ const App = () => {
     setIsUsernameValid(isValidUsername(nameValue))
     setNonexistentUser(false)
     if (nameValue.length === 0) {
-      console.log('Setting USER NAME VALIDATION error to false')
       setIsUsernameValid(true)
     }
   }
