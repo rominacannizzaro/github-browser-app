@@ -3,17 +3,19 @@ import axios from 'axios'
 import User from './components/User'
 import Repo from './components/Repo'
 import NonexistentUser from './components/NonexistentUser'
+import UsernameValidationError from './components/UsernameValidationError'
+import githubUsernameRegex from 'github-username-regex';
 
 const App = () => {
   const [ userInfo, setUserInfo ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ nonexistentUser, setNonexistentUser ] = useState(false)
-
-
+  const [ isUsernameValidationError , setIsUsernameValidationError] = useState(true)
   const [ repos, setRepos ] = useState([])
 
   const searchUser = (event) => {
     event.preventDefault()  
+
     if (newName === '') {
       alert('Please, enter a username.')    
     }
@@ -42,8 +44,9 @@ const App = () => {
   Promise.all([userPromise, reposPromise])
     .then((values) => {
     console.log(values)
+    setNonexistentUser(false)
   })
-  .catch(error => {
+    .catch(error => {
     console.log(`ERROR IS ${error.message}`)
     if (error.message.includes('404')) {
       setNonexistentUser(true)
@@ -51,8 +54,14 @@ const App = () => {
   })
 }
 
+  const isValidUsername = (username) => {
+    return githubUsernameRegex.test(username); 
+  }
+
   const handleNewUser = (event) => {  
-    setNewName(event.target.value)
+    const nameValue = event.target.value
+    setNewName(nameValue)
+    setIsUsernameValidationError(isValidUsername(nameValue))
   }
 
 return (
@@ -75,6 +84,9 @@ return (
         <button type="submit">Search</button>
     </form>
     <br></br>
+    <div>
+      <UsernameValidationError isError={isUsernameValidationError} />
+    </div>
     <div>
       <NonexistentUser nonexistentUser={nonexistentUser} />
     </div>
