@@ -1,31 +1,21 @@
 import React from 'react'
 
-const Repo = ({repo}) => {
-    const languageInfo = `${repo.language}`
-    const renderLanguage = () => languageInfo === 'null' ? 'No languages info specified' : languageInfo
-
-    const descriptionInfo = `${repo.description}`
-    const renderDescription = () => descriptionInfo === 'null' ? 'No description specified' : descriptionInfo
-
-    const licenceInfo = `${repo.licence}`
-    const renderLicence = () => licenceInfo === 'undefined' ? 'No licence specified' : licenceInfo
-
+const Repo = ({ repo }) => {
+    const renderDescription = () => repo.description === null ? 'No description specified' : repo.description
+    const renderLanguage = () => repo.language === null ? 'No languages info specified' : repo.language
+  
     return (
-        <div>   
-            <li>         
-                Name: <a target="_blank" rel="noreferrer" href={repo.html_url}>{repo.name}</a>  
-                <br></br>
-                Last update: {repo.updated_at} 
-                <br></br>
-                Language: {renderLanguage()}
-                <br></br>
-                Description: {renderDescription()} 
-                <br></br>
-                Licence: {renderLicence()} 
-                <br></br>
-            </li>
+        <div>
+            <h4>{repo.name}</h4>
+            Description: {renderDescription()}
+            <br></br>
+            Languages: {renderLanguage()}
+            <br></br>
+            Last update: {repo.updated_at} 
+            <br></br>
+            <a href={repo.html_url} target="_blank" rel="noreferrer">View this repository</a>
         </div>
-   )
+    )
 }
 
 export default Repo
