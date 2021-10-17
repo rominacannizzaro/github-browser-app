@@ -4,7 +4,7 @@ const User = ({ user, repos }) => {
   const pageUrl = `https://www.github.com/${user.name}`
   const renderBio = () => user.bio === null ? 'No bio info specified.' : user.bio  
   const renderLocation = () => user.location === null ? 'No location specified.' : user.location
-  const checkRepos = () => repos.length === 0 ? 'Repositories: No results. This user has not shared any repositories yet.' : null
+  const renderReposText = () => repos.length === 0 ? 'Repositories: No results. This user has not shared any repositories yet.' : 'Repositories found:'
 
   return (   
     <div>
@@ -18,7 +18,8 @@ const User = ({ user, repos }) => {
         <br></br>
         Location: {renderLocation()}
         <br></br>
-        {checkRepos()}
+        <br></br>
+        <h4>{renderReposText()}</h4>
   </div>
   )
 }

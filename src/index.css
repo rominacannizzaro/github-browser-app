@@ -25,3 +25,7 @@ code {
 .display-5 {
     line-height: 1.2;
 }
+
+.card {
+  min-width: 450px;
+}

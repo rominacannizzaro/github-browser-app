@@ -3,6 +3,7 @@ import React from 'react'
 const Repo = ({ repo }) => {
     const renderDescription = () => repo.description === null ? 'No description specified' : repo.description
     const renderLanguage = () => repo.language === null ? 'No languages info specified' : repo.language
+
   
     return (
         <div className="container mx-auto mt-4">
